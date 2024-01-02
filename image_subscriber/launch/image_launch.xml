@@ -1,0 +1,9 @@
+<launch>
+    <!-- Launch the rosbag record node -->
+    <node pkg="rosbag2_storage" exec="record" name="rosbag_record" output="screen">
+        <remap from="rosbag_record" to="rosbag_record"/>  <!-- namespace remap -->
+        <args>-a</args>  <!-- Record all topics -->
+    </node>
+   
+    <node pkg="image_subscriber" exec="pose_display" name="pose_display"/>
+</launch>
