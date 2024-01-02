@@ -29,11 +29,11 @@ class SimpleIBVSController(Node):
 
         #self.focalLength = 0.025 #--> now its in m, aprox from dji tello specs # 904.91767127 # Its verified, its in pixel
         # new calibration data
-        self.fx = 1339.19799798 # pixels
-        self.fy = 1002.35365086 # pixels
-        self.cx = 635.0702291 # pixels
-        self.cy = 400.10328203 # pixels
-        self.focalLength = 1002.35365086 # Pixels
+        self.fx = 1055.463504 # pixels
+        self.fy = 1060.617186 # pixels
+        self.cx = 524.767682 # pixels
+        self.cy = 405.334642 # pixels
+        self.focalLength = 1058.040345 # Pixels
         #self.focalLength = (self.fx + self.fy)/2 # Pixels
         
         # {CF} --> {BF}
@@ -141,18 +141,23 @@ def main(args=None):
     rclpy.init(args=args)
 
     # Set the target position (replace with your desired coordinates)
-    target_position = [[490,210], 
-                       [490,510], 
-                       [790,510], 
-                       [790,210]] # Already corrected, it in pixel units
-    
+    # target_position = [[490,210], 
+    #                    [490,510], 
+    #                    [790,510], 
+    #                    [790,210]] # Already corrected, it in pixel units
+    # Set the target position (replace with your desired coordinates), tis the same as before, but
+    # its in 960x720
+    target_position2 = [[380,110], 
+                        [380,310], 
+                        [580,310], 
+                        [580,110]] # Already corrected, it in pixel units
     # # Try Projection Transformation at Target
     # target_position = [[490,210], 
     #                    [490,510], 
     #                    [632,408], 
     #                    [632,168]]
  
-    ibvs_controller = SimpleIBVSController(target_position)
+    ibvs_controller = SimpleIBVSController(target_position2)
     rclpy.spin(ibvs_controller)
     ibvs_controller.destroy_node()
     rclpy.shutdown()
