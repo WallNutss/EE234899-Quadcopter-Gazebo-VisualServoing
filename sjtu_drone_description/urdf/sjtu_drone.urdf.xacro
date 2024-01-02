@@ -157,11 +157,12 @@
     </sensor>
   </gazebo>
 
+  <!-- https://answers.ros.org/question/377196/find-intrisic-camera-matrix-from-gazebo-model/ -->
   <gazebo reference="front_cam_link">
     <sensor name="front_camera" type="camera">
-    
+
       <camera>
-        <horizontal_fov>1.396263</horizontal_fov>
+        <horizontal_fov>1.3962634</horizontal_fov>
         <image>
           <width>960</width>
           <height>720</height>
@@ -178,10 +179,10 @@
         </noise>
         <lens>
           <intrinsics>
-            <fx>904.91767127</fx>
-            <fy>904.09119851</fy>
-            <cx>503.21829022</cx>
-            <cy>355.3507261</cy>
+            <fx>1055.463504</fx>
+            <fy>1060.617186</fy>
+            <cx>524.767682</cx>
+            <cy>405.334642</cy>
             <s>1</s>
           </intrinsics>
         </lens>
@@ -191,6 +192,7 @@
       <update_rate>0.0</update_rate> <!--It is equal to 45 fps || Yeah for now just stick to 30 :'), its lagging Laptop Kentang sih-->
       <pose>0 0 0 0 0 0</pose>
       <visualize>true</visualize>
+
       <plugin name="camera_front" filename="libgazebo_ros_camera.so">
         <ros>
           <remapping>image_raw:=camera_front</remapping>
@@ -198,16 +200,22 @@
         </ros>
         <camera_name>front</camera_name>
         <frame_name>camera_link_optical</frame_name>
-        <Cx>503.21829022</Cx>
-        <Cy>355.3507261</Cy>
-        <focalLength>904</focalLength>
+        <Cx>524.767682</Cx>
+        <Cy>405.334642</Cy>
+        <focalLength>1058</focalLength>
         <hack_baseline>0.07</hack_baseline>
-        <distortionK1>-0.04265602</distortionK1>
-        <distortionK2>0.10871022</distortionK2>
-        <distortionK3>0.00116397</distortionK3>
-        <distortionT1>0.00197183</distortionT1>
-        <distortionT2>-0.0918521</distortionT2>
+        <!-- Should I fill this with the parameters from
+        calbration or leave it with 0.0? Because in plugin tag,
+        Fill in these values to match the manufacturer's specs on your 
+        physical camera hardware. One thing to note is 
+        that the pixels are assumed to be square. -->
+        <distortionK1>0.070165</distortionK1>
+        <distortionK2>-0.047943</distortionK2>
+        <distortionK3>0.000000</distortionK3>
+        <distortionT1>0.017275</distortionT1>
+        <distortionT2>0.014266</distortionT2>
       </plugin>
+
     </sensor>
   </gazebo>
 
