@@ -4,17 +4,15 @@ from sensor_msgs.msg import Image
 import cv2
 from cv_bridge import CvBridge
 import numpy as np
+import math
 from std_msgs.msg import Float32MultiArray
 import subprocess
 # load in the calibration data
-calib_data_path = "/home/wallnuts/ros2_sjtu_ws/src/image_subscriber/image_subscriber/data_calibration_camera/MultiMatrix.npz"
+cam_mat = np.array([1055.463504,0.000000,524.767682,
+                    0.000000, 1060.617186, 405.334642,
+                    0.000000, 0.000000 ,1.000000]).reshape(3,3)
 
-calib_data = np.load(calib_data_path)
-
-cam_mat = calib_data["camMatrix"]
-dist_coef = calib_data["distCoef"]
-r_vectors = calib_data["rVector"]
-t_vectors = calib_data["tVector"]
+dist_coef = np.array([0.070165, -0.047943, 0.017275,0.014266,0.000000]).reshape(1,5)
 
 MARKER_SIZE = 150  # centimeters (measure your printed marker size)
 
@@ -153,17 +151,17 @@ class ImageDisplayNode(Node):
                 # cv2.putText(cv_image, f"bottom_right", bottom_right, cv2.FONT_HERSHEY_DUPLEX, 0.6, (210,199,142),1, cv2.LINE_AA)
                 # cv2.putText(cv_image, f"top_right", top_right, cv2.FONT_HERSHEY_DUPLEX, 0.6, (7,165,219),1, cv2.LINE_AA)
 
-                # # Draw the information
-                # cv2.putText(
-                #     cv_image,
-                #     f"Id: {ids[0]} Distance: {round(math.sqrt(tVec[i][0][0]**2 + tVec[i][1][0]**2 + tVec[i][2][0]**2)/100,3)} m",
-                #     top_right+20,
-                #     cv2.FONT_HERSHEY_DUPLEX,
-                #     0.6,
-                #     (0,255,0),
-                #     2,
-                #     cv2.LINE_AA
-                # )
+                # Draw the information
+                cv2.putText(
+                    cv_image,
+                    f"Id: {ids[0]} Distance: {round(math.sqrt(tVec[i][0][0]**2 + tVec[i][1][0]**2 + tVec[i][2][0]**2)/100,3)} m",
+                    top_right+20,
+                    cv2.FONT_HERSHEY_DUPLEX,
+                    0.6,
+                    (0,255,0),
+                    2,
+                    cv2.LINE_AA
+                )
         key = cv2.waitKey(1)  # Refresh window
         if key == ord("q"):
             #np.savetxt('./data/result-skenario2-try004.txt', self.dataCorner, fmt='%s')
@@ -173,7 +171,7 @@ class ImageDisplayNode(Node):
             cv2.imwrite(f'./data/{self.get_clock().now()}_image.png', cv_image)
             self.get_logger().info("Successfully saved the image!")
         # Resize the window frame to 60% Downscale for easy monitoring in the node
-        cv_image = cv2.resize(cv_image, (640,360), interpolation=cv2.INTER_AREA) 
+        cv_image = cv2.resize(cv_image, (576,360), interpolation=cv2.INTER_AREA) 
         # Display the image
         cv2.imshow('Image Display Node', cv_image)
             
