@@ -72,8 +72,9 @@ class ImageDisplayNode(Node):
                 ]
     
     def image_callback(self, msg):
-        # Convert ROS Image message to OpenCV format
+        # Convert ROS Image message to OpenCV format, its already on 1280x720
         cv_image = self.cv_bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        #cv_image = cv2.resize(cv_image, (960,720), interpolation=cv2.INTER_AREA)
         # finding the center of the frame
         (h,w) = cv_image.shape[:2]
         # Ploting the desired image location
@@ -84,11 +85,15 @@ class ImageDisplayNode(Node):
 
         # Try Projection Transformation at Target
         #self.get_logger().info(f'n1 : {n1}\nn2: {n2}\nn3 :{n3}\nn4 : {n4}')
+        
+        #self.get_logger().info(f'\nwidth : {w}\nheight: {h}')
+
 
         cv2.circle(cv_image, n1, 5, (255,0,0), 2)
         cv2.circle(cv_image, n2, 5, (255,0,0), 2)
         cv2.circle(cv_image, n3, 5, (255,0,0), 2)
         cv2.circle(cv_image, n4, 5, (255,0,0), 2)
+
         # Ploting the desired image location
         # cv2.putText(cv_image, f"Nomor 1", n1, cv2.FONT_HERSHEY_DUPLEX, 0.8, (0,255,0),1, cv2.LINE_AA)
         # cv2.putText(cv_image, f"Nomor 2", n2, cv2.FONT_HERSHEY_DUPLEX, 0.8, (0,255,0),1, cv2.LINE_AA)
@@ -117,6 +122,12 @@ class ImageDisplayNode(Node):
                 top_right    = corners[1].ravel()
                 bottom_right = corners[2].ravel()
                 bottom_left  = corners[3].ravel()
+
+                # Finding the center
+                centerX = round(((top_left[0]- top_right[0])/2) + top_right[0])
+                centerY = round(((bottom_right[1]- top_right[1])/2) + top_right[1])
+                cv2.circle(cv_image, (centerX, centerY), 5, (0,0,255), 2)
+
                 Z = float(tVec[0][2][0])/100 # cm --> m (untuk sekarang depth masih dalam m untuk dipasskan kedalam Jacobian)
 
                 #self.get_logger().info(f"{str(data)}")

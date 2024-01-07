@@ -80,7 +80,7 @@ class SimpleIBVSController(Node):
         error_data = corner_data[0:self.target.shape[0]] - self.target
         error_data = error_data.reshape(-1,1)
 
-        epsilon = np.sqrt(np.sum(error_data**2)/8)
+        # epsilon = np.sqrt(np.sum(error_data**2)/8)
         # Reason
         # With quadcopter as a non-linear system plus an image with also a non-linear system, it's getting harder
         # to control a quadcopter from an image. To cope with over overshoot, I divide it into two step flight
@@ -88,32 +88,32 @@ class SimpleIBVSController(Node):
         # as we get near the feature we want, at least in radius of 15px of each points, I decide to give the
         # all velocity reference 0. Now at least it seems to be working. 
         # Flight Mechanism 01
-        if epsilon <= 10.0:
-            cmd = np.array([0,0,0,0])
-            self.get_logger().info("01 Flight")
+        # if epsilon <= 10.0:
+        #     cmd = np.array([0,0,0,0])
+        #     self.get_logger().info("01 Flight")
         # Flight Mechanism 02
-        else:    
-            # control = -1*(0.005*error_data + 0.0002*(error_data - self.errorPrev)/delta_time)
-            control_pid = (0.5*error_data + 0.002*(self.errorSum) + 0.05*(error_data-self.errorPrev)/delta_time)
+        #else:    
+        # control = -1*(0.005*error_data + 0.0002*(error_data - self.errorPrev)/delta_time)
+        control_pid = (0.5*error_data + 0.002*(self.errorSum) + 0.05*(error_data-self.errorPrev)/delta_time)
 
-            # Error data in form of shape 8x1 matrixs for Jacobian Pseudo Inverse Calculation
-            jacobian_p1 = self.image_jacobian_matrix((corner_data[0],corner_data[1], corner_data[-1]))
-            jacobian_p2 = self.image_jacobian_matrix((corner_data[2],corner_data[3], corner_data[-1]))
-            jacobian_p3 = self.image_jacobian_matrix((corner_data[4],corner_data[5], corner_data[-1]))
-            jacobian_p4 = self.image_jacobian_matrix((corner_data[6],corner_data[7], corner_data[-1]))
-            
-            Jacobian_ = np.vstack((jacobian_p1,jacobian_p2, jacobian_p3,jacobian_p4))
-            #Jacobian = np.linalg.pinv(Jacobian_)
-            Jacobian = np.linalg.pinv(np.matmul(np.matmul(Jacobian_, self.R),self.jacobian_end_effector))
+        # Error data in form of shape 8x1 matrixs for Jacobian Pseudo Inverse Calculation
+        jacobian_p1 = self.image_jacobian_matrix((corner_data[0],corner_data[1], corner_data[-1]))
+        jacobian_p2 = self.image_jacobian_matrix((corner_data[2],corner_data[3], corner_data[-1]))
+        jacobian_p3 = self.image_jacobian_matrix((corner_data[4],corner_data[5], corner_data[-1]))
+        jacobian_p4 = self.image_jacobian_matrix((corner_data[6],corner_data[7], corner_data[-1]))
+        
+        Jacobian_ = np.vstack((jacobian_p1,jacobian_p2, jacobian_p3,jacobian_p4))
+        #Jacobian = np.linalg.pinv(Jacobian_)
+        Jacobian = np.linalg.pinv(np.matmul(np.matmul(Jacobian_, self.R),self.jacobian_end_effector))
 
-            # np.set_printoptions(suppress=True)
-            #cmd = -self.lamba * np.matmul(Jacobian, error_data) # Camera Command U
-            #cmd = -self.lamba * np.matmul(Jacobian, control_pid) # Camera Command 
-            cmd = -0.2 * np.matmul(Jacobian, control_pid) # Camera Command 
+        # np.set_printoptions(suppress=True)
+        #cmd = -self.lamba * np.matmul(Jacobian, error_data) # Camera Command U
+        #cmd = -self.lamba * np.matmul(Jacobian, control_pid) # Camera Command 
+        cmd = -0.2 * np.matmul(Jacobian, control_pid) # Camera Command 
 
-            # Safety measure, try to cap them for testing and debugging,
-            # Following the format given by tello_ros package, for cmd they map it to [-1,1]
-            cmd = np.clip(cmd,-1.5,1.5)
+        # Safety measure, try to cap them for testing and debugging,
+        # Following the format given by tello_ros package, for cmd they map it to [-1,1]
+        cmd = np.clip(cmd,-1.5,1.5)
 
         cmd_vel_msg = Twist()
         cmd_vel_msg.linear.x = float(cmd[0])
@@ -145,6 +145,10 @@ def main(args=None):
                        [490,510], 
                        [790,510], 
                        [790,210]] # Already corrected, it in pixel units
+    # target_position = [[540,310], 
+    #                    [540,510], 
+    #                    [740,510], 
+    #                    [740,310]] # Already corrected, it in pixel units
     
     # # Try Projection Transformation at Target
     # target_position = [[490,210], 

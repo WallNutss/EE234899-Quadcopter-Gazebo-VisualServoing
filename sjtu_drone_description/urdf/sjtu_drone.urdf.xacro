@@ -94,7 +94,7 @@
       <maxForce>30</maxForce>
       <motionSmallNoise>0.0</motionSmallNoise>
       <motionDriftNoise>0.0</motionDriftNoise>
-      <motionDriftNoiseTime>0.0</motionDriftNoiseTime>   <!-- this means add noise every two seconds -->
+      <motionDriftNoiseTime>5.0</motionDriftNoiseTime>   <!-- this means add noise every two seconds -->
     </plugin>
   </gazebo>
 
@@ -177,16 +177,16 @@
         </noise>
         <lens>
           <intrinsics>
-            <fx>904.91767127</fx>
-            <fy>904.09119851</fy>
-            <cx>503.21829022</cx>
-            <cy>355.3507261</cy>
-            <s>1</s>
+            <fx>1327.479648</fx>
+            <fy>992.077129</fy>
+            <cx>691.797405</cx>
+            <cy>412.419545</cy>
+            <s>0</s>
           </intrinsics>
         </lens>
       </camera>
       <always_on>true</always_on>
-      <update_rate>0.0</update_rate> <!--It is equal to 45 fps || Yeah for now just stick to 30 :'), its lagging Laptop Kentang sih-->
+      <update_rate>30.0</update_rate> <!--It is equal to 45 fps || Yeah for now just stick to 30 :'), its lagging Laptop Kentang sih-->
       <pose>0 0 0 0 0 0</pose>
       <visualize>true</visualize>
       <plugin name="camera_front" filename="libgazebo_ros_camera.so">
@@ -196,15 +196,15 @@
         </ros>
         <camera_name>front</camera_name>
         <frame_name>camera_link_optical</frame_name>
-        <Cx>503.21829022</Cx>
-        <Cy>355.3507261</Cy>
-        <focalLength>904</focalLength>
+        <Cx>691.797405</Cx>
+        <Cy>412.419545</Cy>
+        <!-- <focalLength>904</focalLength> -->
         <hack_baseline>0.07</hack_baseline>
-        <distortionK1>-0.04265602</distortionK1>
-        <distortionK2>0.10871022</distortionK2>
-        <distortionK3>0.00116397</distortionK3>
-        <distortionT1>0.00197183</distortionT1>
-        <distortionT2>-0.0918521</distortionT2>
+        <distortionK1>0.000830</distortionK1>
+        <distortionK2>0.079536</distortionK2>
+        <distortionT1>0.009050</distortionT1>
+        <distortionT2>0.013654</distortionT2>
+        <distortionK3>0.000000</distortionK3>
       </plugin>
     </sensor>
   </gazebo>
