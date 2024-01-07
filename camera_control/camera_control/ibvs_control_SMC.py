@@ -29,11 +29,11 @@ class IBVSController(Node):
 
         #self.focalLength = 0.025 #--> now its in m, aprox from dji tello specs # 904.91767127 # Its verified, its in pixel
         # new calibration data
-        self.fx = 1249.370890 # pixels
-        self.fy = 939.661524 # pixels
-        self.cx = 652.618692 # pixels
-        self.cy = 359.192844 # pixels
-        self.focalLength = 939.661524 # Pixels
+        self.fx = 925.259979 # pixels
+        self.fy = 927.502076 # pixels
+        self.cx = 491.398274 # pixels
+        self.cy = 371.463298 # pixels
+        self.focalLength = 925.259979 # Pixels
 
         # {CF} --> {BF}
         # cRe = np.array([[0,0,1],[-1,0,0],[0,-1,0]])
@@ -157,9 +157,6 @@ class IBVSController(Node):
         self.errorSum = self.errorSum + error_data
         self.errorPrev = error_data
         self.last_time = current_time
-
-
-
 
 
 def main(args=None):
