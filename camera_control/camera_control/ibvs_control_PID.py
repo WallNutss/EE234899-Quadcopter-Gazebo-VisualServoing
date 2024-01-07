@@ -29,11 +29,11 @@ class SimpleIBVSController(Node):
 
         #self.focalLength = 0.025 #--> now its in m, aprox from dji tello specs # 904.91767127 # Its verified, its in pixel
         # new calibration data
-        self.fx = 904.91767127 # pixels
-        self.fy = 904.09119851 # pixels
-        self.cx = 503.21829022 # pixels
-        self.cy = 355.3507261 # pixels
-        self.focalLength = 904.91767127 # Pixels
+        self.fx = 1249.370890 # pixels
+        self.fy = 939.661524 # pixels
+        self.cx = 652.618692 # pixels
+        self.cy = 359.192844 # pixels
+        self.focalLength = 939.661524 # Pixels
         #self.focalLength = (self.fx + self.fy)/2 # Pixels
         
         # {CF} --> {BF}

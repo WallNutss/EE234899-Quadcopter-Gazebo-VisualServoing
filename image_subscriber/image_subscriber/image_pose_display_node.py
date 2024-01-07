@@ -6,18 +6,23 @@ from cv_bridge import CvBridge
 import numpy as np
 from std_msgs.msg import Float32MultiArray
 import subprocess
+import math
 # load in the calibration data
-calib_data_path = "/home/wallnuts/ros2_sjtu_ws/src/image_subscriber/image_subscriber/data_calibration_camera/MultiMatrix.npz"
+# calib_data_path = "/home/wallnuts/ros2_sjtu_ws/src/image_subscriber/image_subscriber/data_calibration_camera/MultiMatrix.npz"
 
-calib_data = np.load(calib_data_path)
+# calib_data = np.load(calib_data_path)
 
-cam_mat = calib_data["camMatrix"]
-dist_coef = calib_data["distCoef"]
-r_vectors = calib_data["rVector"]
-t_vectors = calib_data["tVector"]
+# cam_mat = calib_data["camMatrix"]
+# dist_coef = calib_data["distCoef"]
+# r_vectors = calib_data["rVector"]
+# t_vectors = calib_data["tVector"]
+cam_mat = np.array([1249.370890,        0.0, 652.618692,
+                    0.0        , 939.661524, 359.192844,
+                    0.0        , 0.0       ,1.0]).reshape(3,3)
+
+dist_coef = np.array([-0.043470, 0.177826, 0.001499, 0.001253, 0.0]).reshape(1,5)
 
 MARKER_SIZE = 150  # centimeters (measure your printed marker size)
-
 MARKER_DICT = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_100)
 PARAM_MARKERS = cv2.aruco.DetectorParameters()
 DETECTOR = cv2.aruco.ArucoDetector(MARKER_DICT, PARAM_MARKERS)
@@ -87,7 +92,6 @@ class ImageDisplayNode(Node):
         #self.get_logger().info(f'n1 : {n1}\nn2: {n2}\nn3 :{n3}\nn4 : {n4}')
         
         #self.get_logger().info(f'\nwidth : {w}\nheight: {h}')
-
 
         cv2.circle(cv_image, n1, 5, (255,0,0), 2)
         cv2.circle(cv_image, n2, 5, (255,0,0), 2)
@@ -165,16 +169,16 @@ class ImageDisplayNode(Node):
                 # cv2.putText(cv_image, f"top_right", top_right, cv2.FONT_HERSHEY_DUPLEX, 0.6, (7,165,219),1, cv2.LINE_AA)
 
                 # # Draw the information
-                # cv2.putText(
-                #     cv_image,
-                #     f"Id: {ids[0]} Distance: {round(math.sqrt(tVec[i][0][0]**2 + tVec[i][1][0]**2 + tVec[i][2][0]**2)/100,3)} m",
-                #     top_right+20,
-                #     cv2.FONT_HERSHEY_DUPLEX,
-                #     0.6,
-                #     (0,255,0),
-                #     2,
-                #     cv2.LINE_AA
-                # )
+                cv2.putText(
+                    cv_image,
+                    f"Id: {ids[0]} Distance: {round(math.sqrt(tVec[i][0][0]**2 + tVec[i][1][0]**2 + tVec[i][2][0]**2)/100,3)} m",
+                    top_right+20,
+                    cv2.FONT_HERSHEY_DUPLEX,
+                    0.6,
+                    (0,255,0),
+                    2,
+                    cv2.LINE_AA
+                )
         key = cv2.waitKey(1)  # Refresh window
         if key == ord("q"):
             #np.savetxt('./data/result-skenario2-try004.txt', self.dataCorner, fmt='%s')
