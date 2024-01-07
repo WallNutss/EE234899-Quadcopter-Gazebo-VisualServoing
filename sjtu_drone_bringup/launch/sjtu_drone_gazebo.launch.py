@@ -26,7 +26,7 @@ def generate_launch_description():
 
     world_file = os.path.join(
         get_package_share_directory("sjtu_drone_description"),
-        "worlds", "skenario2.world"
+        "worlds", "skenario1_6.world"
     )
 
     return LaunchDescription([

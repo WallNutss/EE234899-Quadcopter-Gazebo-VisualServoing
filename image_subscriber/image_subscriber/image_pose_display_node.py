@@ -16,11 +16,11 @@ import math
 # dist_coef = calib_data["distCoef"]
 # r_vectors = calib_data["rVector"]
 # t_vectors = calib_data["tVector"]
-cam_mat = np.array([1249.370890,        0.0, 652.618692,
-                    0.0        , 939.661524, 359.192844,
-                    0.0        , 0.0       ,1.0]).reshape(3,3)
+cam_mat = np.array([925.259979,         0.0, 491.398274,
+                    0.0        , 927.502076, 371.463298,
+                    0.0        , 0.0       , 1.0]).reshape(3,3)
 
-dist_coef = np.array([-0.043470, 0.177826, 0.001499, 0.001253, 0.0]).reshape(1,5)
+dist_coef = np.array([-0.018452, 0.108834, 0.003492, 0.001679, 0.0]).reshape(1,5)
 
 MARKER_SIZE = 150  # centimeters (measure your printed marker size)
 MARKER_DICT = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_100)

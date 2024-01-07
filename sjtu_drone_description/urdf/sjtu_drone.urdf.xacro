@@ -161,7 +161,7 @@
     <sensor name="front_camera" type="camera">
       <camera>
       <!-- https://www.rapidtables.com/convert/number/degrees-to-radians.html?x=82.6 -->
-        <horizontal_fov>1.4416419621</horizontal_fov>
+        <horizontal_fov>1.396263</horizontal_fov>
         <image>
           <width>1280</width>
           <height>720</height>

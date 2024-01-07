@@ -29,12 +29,11 @@ class IBVSController(Node):
 
         #self.focalLength = 0.025 #--> now its in m, aprox from dji tello specs # 904.91767127 # Its verified, its in pixel
         # new calibration data
-        self.fx = 1339.19799798 # pixels
-        self.fy = 1002.35365086 # pixels
-        self.cx = 635.0702291 # pixels
-        self.cy = 400.10328203 # pixels
-        self.focalLength = 1002.35365086 # Pixels
-        #self.focalLength = (self.fx + self.fy)/2 # Pixels
+        self.fx = 1249.370890 # pixels
+        self.fy = 939.661524 # pixels
+        self.cx = 652.618692 # pixels
+        self.cy = 359.192844 # pixels
+        self.focalLength = 939.661524 # Pixels
 
         # {CF} --> {BF}
         # cRe = np.array([[0,0,1],[-1,0,0],[0,-1,0]])
@@ -101,10 +100,10 @@ class IBVSController(Node):
         # Flight Mechanism 02
         else:
             # Sliding Surface                                              lambda              lambda2
-            sliding_surface = ((error_data - self.errorPrev)/delta_time) + 0.7*(error_data) + 0.8*(self.errorSum)
+            sliding_surface = ((error_data - self.errorPrev)/delta_time) + 0.6*(error_data) + 0.8*(self.errorSum)
             
             # Control                  K                        lambda                                lambda2                            
-            control_smc = 2*np.tanh(sliding_surface) + 0.7*(error_data-self.errorPrev)/delta_time + 0.8*(error_data)
+            control_smc = 2*np.tanh(sliding_surface) + 0.6*(error_data-self.errorPrev)/delta_time + 0.8*(error_data)
 
             # Error data in form of shape 8x1 matrixs for Jacobian Pseudo Inverse Calculation
             jacobian_p1 = self.image_jacobian_matrix((corner_data[0],corner_data[1], corner_data[-1]))
