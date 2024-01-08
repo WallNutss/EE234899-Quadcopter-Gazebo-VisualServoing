@@ -93,11 +93,6 @@ class ImageDisplayNode(Node):
         
         #self.get_logger().info(f'\nwidth : {w}\nheight: {h}')
 
-        cv2.circle(cv_image, n1, 5, (255,0,0), 2)
-        cv2.circle(cv_image, n2, 5, (255,0,0), 2)
-        cv2.circle(cv_image, n3, 5, (255,0,0), 2)
-        cv2.circle(cv_image, n4, 5, (255,0,0), 2)
-
         # Ploting the desired image location
         # cv2.putText(cv_image, f"Nomor 1", n1, cv2.FONT_HERSHEY_DUPLEX, 0.8, (0,255,0),1, cv2.LINE_AA)
         # cv2.putText(cv_image, f"Nomor 2", n2, cv2.FONT_HERSHEY_DUPLEX, 0.8, (0,255,0),1, cv2.LINE_AA)
@@ -179,6 +174,12 @@ class ImageDisplayNode(Node):
                     2,
                     cv2.LINE_AA
                 )
+
+        cv2.circle(cv_image, n1, 5, (255,0,0), 2)
+        cv2.circle(cv_image, n2, 5, (255,0,0), 2)
+        cv2.circle(cv_image, n3, 5, (255,0,0), 2)
+        cv2.circle(cv_image, n4, 5, (255,0,0), 2)
+        
         key = cv2.waitKey(1)  # Refresh window
         if key == ord("q"):
             #np.savetxt('./data/result-skenario2-try004.txt', self.dataCorner, fmt='%s')
