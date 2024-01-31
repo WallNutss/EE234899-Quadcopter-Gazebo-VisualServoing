@@ -16,16 +16,13 @@ def VelocityTwistMatrix(cRe,cTe):
 
 class SimpleIBVSController(Node):
     def __init__(self,target):
-        super().__init__('IBVS_Controller')
+        super().__init__('IBVS_PIDController')
         self.get_logger().info("This is the start of IBVS PID Controller")
         self.publisher = self.create_publisher(Twist, '/drone/cmd_vel', 10)
         self.subscription = self.create_subscription(Float32MultiArray, '/corner_data', self.data_callback, 10)
         self.publishererror = self.create_publisher(Float32MultiArray, '/error_data', 10)
         self.errData = Float32MultiArray()
         self.target = np.array(self.flatten_nested_list(target))
-        # self.get_logger().info(f"{self.target}")
-                            # y[0]   z[1] x[2]  wy wz  wx
-        self.lamba = np.array([0.08, 0.095, 0.2, 1.2, 1.2, 1.2]).reshape(6,1)
 
         #self.focalLength = 0.025 #--> now its in m, aprox from dji tello specs # 904.91767127 # Its verified, its in pixel
         # new calibration data
@@ -36,7 +33,6 @@ class SimpleIBVSController(Node):
         self.focalLength = 925.259979 # Pixels
         
         # {CF} --> {BF}
-        # cRe = np.array([[0,0,1],[-1,0,0],[0,-1,0]])
         cRe = np.array([[0,-1,0],[0,0,-1],[1,0,0]])
         cTe = np.array([0,0,0])
         self.R = VelocityTwistMatrix(cRe,cTe)
@@ -56,14 +52,7 @@ class SimpleIBVSController(Node):
                       (data[0]*data[1])/self.focalLength, -(self.focalLength + data[0]**2/self.focalLength), data[1],
                       0, -self.focalLength/data[2], data[1]/data[2],
                       (self.focalLength + data[1]**2/self.focalLength), (-data[0]*data[1])/self.focalLength, -data[0]]).reshape(2,6)
-        return L 
-
-    def image_jacobian_matrix2(self, data):
-        L = np.array([1/data[2], 0 , data[0]/data[2],
-                      data[0]*data[1], -(1+data[0]**2), data[1],
-                      0, -1/data[2], data[1]/data[2],
-                      (1+data[1]**2), -data[0]*data[1], -data[0]]).reshape(2,6)
-        return L    
+        return L  
 
     def flatten_nested_list(self, nested_list):
         return [float(item) for sublist in nested_list for item in sublist]
@@ -102,12 +91,9 @@ class SimpleIBVSController(Node):
             jacobian_p4 = self.image_jacobian_matrix((corner_data[6],corner_data[7], corner_data[-1]))
             
             Jacobian_ = np.vstack((jacobian_p1,jacobian_p2, jacobian_p3,jacobian_p4))
-            #Jacobian = np.linalg.pinv(Jacobian_)
             Jacobian = np.linalg.pinv(np.matmul(np.matmul(Jacobian_, self.R),self.jacobian_end_effector))
 
             # np.set_printoptions(suppress=True)
-            #cmd = -self.lamba * np.matmul(Jacobian, error_data) # Camera Command U
-            #cmd = -self.lamba * np.matmul(Jacobian, control_pid) # Camera Command 
             cmd = -0.2 * np.matmul(Jacobian, control_pid) # Camera Command 
 
             # Safety measure, try to cap them for testing and debugging,
@@ -133,9 +119,6 @@ class SimpleIBVSController(Node):
         self.last_time = current_time
 
 
-
-
-
 def main(args=None):
     rclpy.init(args=args)
 
@@ -144,16 +127,12 @@ def main(args=None):
                        [490,510], 
                        [790,510], 
                        [790,210]] # Already corrected, it in pixel units
-    # target_position = [[540,310], 
-    #                    [540,510], 
-    #                    [740,510], 
-    #                    [740,310]] # Already corrected, it in pixel units
-    
-    # # Try Projection Transformation at Target
-    # target_position = [[490,210], 
-    #                    [490,510], 
-    #                    [632,408], 
-    #                    [632,168]]
+
+    # Try Projection Transformation at Target
+    target_position2 = [[515,210], 
+                       [515,540], 
+                       [765,540], 
+                       [765,210]]
  
     ibvs_controller = SimpleIBVSController(target_position)
     rclpy.spin(ibvs_controller)

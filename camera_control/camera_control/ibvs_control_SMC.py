@@ -23,9 +23,6 @@ class IBVSController(Node):
         self.publishererror = self.create_publisher(Float32MultiArray, '/error_data', 10)
         self.errData = Float32MultiArray()
         # self.get_logger().info(f"{self.target}")
-        # 0.2 its ok, but the more you put >0.2 the more it breaks, better put them around 0.01 ~ 0.15
-                            # y[0]   z[1] x[2]  wy  wz  wx
-        self.lamba = np.array([0.1, 0.09, 0.2, 0, 1.2, 2]).reshape(6,1)
 
         #self.focalLength = 0.025 #--> now its in m, aprox from dji tello specs # 904.91767127 # Its verified, its in pixel
         # new calibration data
@@ -36,7 +33,6 @@ class IBVSController(Node):
         self.focalLength = 925.259979 # Pixels
 
         # {CF} --> {BF}
-        # cRe = np.array([[0,0,1],[-1,0,0],[0,-1,0]])
         cRe = np.array([[0,-1,0],[0,0,-1],[1,0,0]])
         cTe = np.array([0,0,0])
         self.R = VelocityTwistMatrix(cRe,cTe)
@@ -51,9 +47,6 @@ class IBVSController(Node):
         self.errorSum = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]).reshape(8,1)
         self.errorDiff = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]).reshape(8,1)
         self.errorPrev = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]).reshape(8,1)
-
-        #self.kp = np.array([0.005, 0.005, 0.005, 0.005, 0.005, 0.050, 0.05, 0.05]).reshape(8,1)
-
     
     def image_jacobian_matrix(self, data):
         L = np.array([-self.focalLength/data[2], 0, data[0]/data[2], 
@@ -61,20 +54,9 @@ class IBVSController(Node):
                       0, -self.focalLength/data[2], data[1]/data[2],
                       (self.focalLength + data[1]**2/self.focalLength), (-data[0]*data[1])/self.focalLength, -data[0]]).reshape(2,6)
         return L 
-    
-    def image_jacobian_matrix2(self, data):
-        L = np.array([1/data[2], 0 , data[0]/data[2],
-                      data[0]*data[1], -(1+data[0]**2), data[1],
-                      0, -1/data[2], data[1]/data[2],
-                      (1+data[1]**2), -data[0]*data[1], -data[0]]).reshape(2,6)
-        return L    
-
-    def image_projection(self, principal, focallength, pixel):
-        return (pixel - principal)/focallength
 
     def flatten_nested_list(self, nested_list):
         return [float(item) for sublist in nested_list for item in sublist]
-    
     
     def data_callback(self, data):
         # self.get_logger().info("This is from IBVS Function\n")
@@ -112,20 +94,11 @@ class IBVSController(Node):
             jacobian_p4 = self.image_jacobian_matrix((corner_data[6],corner_data[7], corner_data[-1]))
             
             Jacobian_ = np.vstack((jacobian_p1,jacobian_p2, jacobian_p3,jacobian_p4))
-            #Jacobian = np.linalg.pinv(Jacobian_)
             Jacobian = np.linalg.pinv(np.matmul(np.matmul(Jacobian_, self.R),self.jacobian_end_effector))
-            #Jacobian = np.matmul(np.linalg.pinv(np.matmul(Jacobian_.T, Jacobian_)),Jacobian_.T)
-            #self.get_logger().info(f"Jacobian Matrix : {Jacobian}\n")
-            # #self.get_logger().info(f"Moore-Penrose Pseudo Jacobian : {Jacobian}\n")
-            # self.get_logger().info(f"Error data: {error_data}\n")
-
 
             # np.set_printoptions(suppress=True)
-            #cmd = -self.lamba * np.matmul(Jacobian, error_data) # Camera Command U
             cmd = -0.2 * np.matmul(Jacobian, control_smc) # Camera Command U
-            #cmd = np.matmul(Jacobian, control)
             #cmd = -self.lamba * (Jacobian @ error_data)
-
 
             # Safety measure, try to cap them for testing and debugging,
             # Following the format given by tello_ros package, for cmd they map it to [-1,1]
@@ -143,11 +116,6 @@ class IBVSController(Node):
         self.publisher.publish(cmd_vel_msg)
 
         #self.get_logger().info(f"Computational cmd: {cmd}\n")
-        # cmd_vel_msg = Twist()
-        # cmd_vel_msg.linear.x = round(float(cmd[0]),3)
-        # cmd_vel_msg.linear.y = round(float(cmd[1]),3)
-        # cmd_vel_msg.linear.z = round(float(cmd[2]),3)
-        # cmd_vel_msg.angular.z = round(float(cmd[5]),3)
 
         # Publish for logging purpose
         self.errData.data = self.flatten_nested_list(error_data)
@@ -168,12 +136,12 @@ def main(args=None):
                        [790,510], 
                        [790,210]] # Already corrected, it in pixel units
     
-    # # Try Projection Transformation at Target
-    # target_position = [[490,210], 
-    #                    [490,510], 
-    #                    [632,408], 
-    #                    [632,168]]
- 
+    # Try Projection Transformation at Target
+    target_position2 = [[515,210], 
+                       [515,540], 
+                       [765,540], 
+                       [765,210]]
+    
     ibvs_controller = IBVSController(target_position)
     rclpy.spin(ibvs_controller)
     ibvs_controller.destroy_node()
