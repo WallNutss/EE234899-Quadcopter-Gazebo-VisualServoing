@@ -94,7 +94,7 @@
       <maxForce>30</maxForce>
       <motionSmallNoise>0.0</motionSmallNoise>
       <motionDriftNoise>0.0</motionDriftNoise>
-      <motionDriftNoiseTime>5.0</motionDriftNoiseTime>   <!-- this means add noise every two seconds -->
+      <motionDriftNoiseTime>0.0</motionDriftNoiseTime>   <!-- this means add noise every two seconds -->
     </plugin>
   </gazebo>
 
