@@ -69,19 +69,20 @@ class SimpleIBVSController(Node):
         error_data = error_data.reshape(-1,1)
 
         epsilon = np.sqrt(np.sum(error_data**2)/8)
-        # Reason
-        # With quadcopter as a non-linear system plus an image with also a non-linear system, it's getting harder
-        # to control a quadcopter from an image. To cope with over overshoot, I divide it into two step flight
-        # mechanism the cope with this, at least to reduce the burden of the calculation and easy implementation
-        # as we get near the feature we want, at least in radius of 15px of each points, I decide to give the
-        # all velocity reference 0. Now at least it seems to be working. 
+        '''
+        - Dev Note
+        With quadcopter as a non-linear system plus an image with also a non-linear system, it's getting harder
+        to control a quadcopter from an image. To cope with over overshoot, I divide it into two step flight
+        mechanism the cope with this, at least to reduce the burden of the calculation and easy implementation
+        as we get near the feature we want, at least in radius of 15px of each points, I decide to give the
+        all velocity reference 0. But in this simulation, I make it to 1px to be fair
+        '''
         # Flight Mechanism 01
-        if epsilon <= 10.0:
+        if epsilon <= 1.0:
             cmd = np.array([0,0,0,0])
             self.get_logger().info("01 Flight")
-        #Flight Mechanism 02
+        # Flight Mechanism 02
         else:    
-            # control = -1*(0.005*error_data + 0.0002*(error_data - self.errorPrev)/delta_time)
             control_pid = (0.5*error_data + 0.002*(self.errorSum) + 0.05*(error_data-self.errorPrev)/delta_time)
 
             # Error data in form of shape 8x1 matrixs for Jacobian Pseudo Inverse Calculation
@@ -92,8 +93,7 @@ class SimpleIBVSController(Node):
             
             Jacobian_ = np.vstack((jacobian_p1,jacobian_p2, jacobian_p3,jacobian_p4))
             Jacobian = np.linalg.pinv(np.matmul(np.matmul(Jacobian_, self.R),self.jacobian_end_effector))
-
-            # np.set_printoptions(suppress=True)
+            
             cmd = -0.2 * np.matmul(Jacobian, control_pid) # Camera Command 
 
             # Safety measure, try to cap them for testing and debugging,
