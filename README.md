@@ -1,5 +1,8 @@
 # Autonomous Quadcopter Position Control using Visual Servoing Simulation in Gazebo
 My second phase for my undergraduate thesis which is simulation the vision part, which is the crucial part on my undergraduate thesis. A Quadcopter navigation system using the visual sensor as it's main navigation sensor system to reach it's destination. This package program is a quadrotor simulation program forked from sjtu_drone(https://github.com/NovoG93/sjtu_drone), developed using ROS 2 Foxy - Gazebo Classic 11 Simulation.
+<p align="center">
+  <img width="79%"src="doc/PresentationGazeboIBVS.png">
+</p>
 
 ## Downloading
 In this simulation, I have divide it into two section, which is capturing the visual and control, where each of them form two node that is the image_subscriber and camera_control. So the thing you wanna do is first make your own workspace and put all the code in this github to the src folder. 
