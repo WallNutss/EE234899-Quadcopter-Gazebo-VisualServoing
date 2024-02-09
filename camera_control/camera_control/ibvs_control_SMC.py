@@ -22,6 +22,7 @@ class IBVSController(Node):
         self.target = np.array(self.flatten_nested_list(target))
         self.publishererror = self.create_publisher(Float32MultiArray, '/error_data', 10)
         self.errData = Float32MultiArray()
+        self.lambda_s = 0.2
         # self.get_logger().info(f"{self.target}")
 
         #self.focalLength = 0.025 #--> now its in m, aprox from dji tello specs # 904.91767127 # Its verified, its in pixel
@@ -98,7 +99,7 @@ class IBVSController(Node):
             Jacobian_ = np.vstack((jacobian_p1,jacobian_p2, jacobian_p3,jacobian_p4))
             Jacobian = np.linalg.pinv(np.matmul(np.matmul(Jacobian_, self.R),self.jacobian_end_effector))
 
-            cmd = -0.2 * np.matmul(Jacobian, control_smc) # Camera Command U
+            cmd = -self.lambda_s * np.matmul(Jacobian, control_smc) # Camera Command U
 
             # Safety measure, try to cap them for testing and debugging,
             # Following the format given by tello_ros package, for cmd they map it to [-1,1]
