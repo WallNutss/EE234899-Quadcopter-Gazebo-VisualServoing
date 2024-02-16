@@ -38,7 +38,7 @@ In default, if you run it the way instruction up there, the default placement wi
 
 ## System Architecture
 <p align="center">
-  <img width="69%"src="doc/Architecture-ROS.png">
+  <img width="89%"src="doc/Architecture-ROS.png">
 </p>
 
 ### Camera Capture
@@ -92,12 +92,11 @@ Email : wallnuts73@gmail.com
 
 ## Reference
 <a id="1">[1]</a> 
-Dijkstra, E. W. (1968). 
-Go to statement considered harmful. 
-Communications of the ACM, 11(3), 147-148.
+Corke, P (2011). 
+Vision-Based Control
+Robotics, Vision and Control pp 455–479
 
 <a id="1">[2]</a> 
-Dijkstra, E. W. (1968). 
-Go to statement considered harmful. 
-Communications of the ACM, 11(3), 147-148.
-
+Li, S., Ghasemi, A., Xie, W., & Gao, Y. (2017). 
+Sliding Mode Control (SMC) of Image‐Based Visual Servoing for a 6DOF Manipulator
+In Recent Developments in Sliding Mode Control Theory and Applications. InTech
